@@ -1,0 +1,77 @@
+﻿@model MaterMan.Models.RegisterViewModel
+
+<div class="container mt-4">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4">Hesap Oluştur</h2>
+
+        <form asp-action="Index" method="post">
+            @Html.AntiForgeryToken() <!-- CSRF koruması ekle -->
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="UserName" class="font-weight-bold"></label>
+                        <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adınızı girin" />
+                        <span asp-validation-for="UserName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password" class="font-weight-bold"></label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Şifrenizi girin" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Name" class="font-weight-bold"></label>
+                        <input asp-for="Name" class="form-control" placeholder="Adınızı girin" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Surname" class="font-weight-bold"></label>
+                        <input asp-for="Surname" class="form-control" placeholder="Soyadınızı girin" />
+                        <span asp-validation-for="Surname" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Address" class="font-weight-bold"></label>
+                        <input asp-for="Address" class="form-control" placeholder="Adresinizi girin" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Department" class="font-weight-bold"></label>
+                        <input asp-for="Department" class="form-control" placeholder="Departmanınızı girin" />
+                        <span asp-validation-for="Department" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="IdentityCard" class="font-weight-bold"></label>
+                        <input asp-for="IdentityCard" class="form-control" placeholder="Kimlik numaranızı girin" />
+                        <span asp-validation-for="IdentityCard" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email" class="font-weight-bold"></label>
+                        <input asp-for="Email" type="email" class="form-control" placeholder="E-posta adresinizi girin" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="font-weight-bold"></label>
+                        <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="Telefon numaranızı girin" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-primary px-5">Kayıt Ol</button>
+            </div>
+        </form>
+    </div>
+</div>

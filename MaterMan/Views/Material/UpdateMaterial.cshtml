@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "UpdateMaterial";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model MaterMan.Entity.Concrete.Malzeme
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-gradient text-white text-center py-3" style="background: linear-gradient(90deg, #007bff, #6610f2);">
+            <h4 class="mb-0">🔧 Malzeme Güncelle</h4>
+        </div>
+        <div class="card-body p-4">
+            @if (Model != null)
+            {
+                @if (ViewBag.Succeeded != null)
+                {
+                    <div class="alert alert-success text-center shadow-sm">
+                        ✅ @ViewBag.Succeeded
+                    </div>
+                }
+            }
+
+            <form asp-action="UpdateMaterial" method="post">
+                <div class="form-group mb-3">
+                    <label asp-for="MalzemeAdi" class="fw-bold"></label>
+                    <input asp-for="MalzemeAdi" class="form-control shadow-sm" placeholder="Malzeme adını girin" />
+                    <span asp-validation-for="MalzemeAdi" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">📂 Malzeme Grubu</label>
+                    <select asp-for="MalzemeGrupId" asp-items="ViewBag.MalzemeGruplari" class="form-control shadow-sm">
+                        <option value="">Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="MalzemeGrupId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="fw-bold">⚖️ Malzeme Birimi</label>
+                    <select asp-for="MalzemeBirimId" asp-items="ViewBag.MalzemeBirimleri" class="form-control shadow-sm">
+                        <option value="">Seçiniz</option>
+                    </select>
+                    <span asp-validation-for="MalzemeBirimId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="StokMiktari" class="fw-bold">📊 Stok Miktarı</label>
+                    <input type="number" asp-for="StokMiktari" class="form-control shadow-sm" placeholder="Stok miktarını girin" step="any">
+                    <span asp-validation-for="StokMiktari" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary shadow-lg px-4">💾 Güncelle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

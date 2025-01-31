@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<MaterMan.Entity.Concrete.Malzeme>
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+        <div class="card-header bg-gradient text-white text-center py-3" style="background: linear-gradient(90deg, #007bff, #6610f2);">
+            <h4 class="mb-0">📋 Malzeme Listesi</h4>
+        </div>
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-end mb-3">
+                <a asp-action="AddMaterial" class="btn btn-success shadow-lg">➕ Ekle</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle text-center shadow-sm">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>📛 Adı</th>
+                            <th>📂 Türü</th>
+                            <th>📊 Stok Miktarı</th>
+                            <th>💰 Fiyat</th>
+                            <th>⚖️ Birim</th>
+                            <th>✏️ Güncelle</th>
+                            <th>🗑️ Sil</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.MalzemeAdi</td>
+                                <td>@item.MalzemeGrup.GrupAdi</td>
+                                <td>@item.StokMiktari</td>
+                                <td>Fiyat</td>
+                                <td>@item.MalzemeBirim.BirimAdi</td>
+                                <td>
+                                    <a asp-action="UpdateMaterial" asp-route-id="@item.Id" class="btn btn-warning text-white shadow-sm">✏️ Güncelle</a>
+                                </td>
+                                <td>
+                                    <form asp-action="DeleteMaterial" method="post" onsubmit="return confirm('❌ Silmek istediğinize emin misiniz?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-danger shadow-sm">🗑️ Sil</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
