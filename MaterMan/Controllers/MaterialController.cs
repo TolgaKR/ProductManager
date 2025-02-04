@@ -178,7 +178,7 @@ namespace MaterMan.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateMaterial(Malzeme malzeme)
         {
-           
+            malzeme.IsActive=true;
             await _malzemeService.UpdateMalzemeAsync(malzeme);
 
             return RedirectToAction("Index");

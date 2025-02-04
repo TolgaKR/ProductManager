@@ -73,6 +73,11 @@ namespace MaterMan.Business.Concrete
             throw new NotImplementedException();
         }
 
+        public async Task<decimal> GetStockByMalzemeIdAsync(int malzemeId)
+        {
+            return await _malzemeDal.GetStockByMalzemeIdAsync(malzemeId);
+        }
+
         public void Update(Malzeme entity)
         {
             throw new NotImplementedException();

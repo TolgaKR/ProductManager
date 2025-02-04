@@ -1,0 +1,151 @@
+﻿@using MaterMan.Entity.Concrete;
+@model List<Malzeme>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reçete Oluştur</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 700px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Reçete Oluştur</h2>
+
+        <div class="mb-3">
+            <label>Reçete İsmi</label>
+            <input type="text" class="form-control" id="receteIsmi">
+        </div>
+
+        <div class="mb-3">
+            <label>Açıklama</label>
+            <input type="text" class="form-control" id="aciklama">
+        </div>
+
+        <div class="mb-3">
+            <label>Versiyon No</label>
+            <input type="number" class="form-control" id="versiyonNo">
+        </div>
+
+        <h4>Reçete Kalemleri</h4>
+
+        <div class="row mb-3">
+            <div class="col-md-5">
+                <select class="form-control" id="malzemeSelect">
+                    <option value="">Malzeme Seçiniz</option>
+                    @foreach (var malzeme in Model)
+                    {
+                        <option value="@malzeme.Id" data-stok="@malzeme.StokMiktari">
+                            @malzeme.MalzemeAdi (Stok: @malzeme.StokMiktari)
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="number" class="form-control" id="miktarInput" placeholder="Miktar">
+            </div>
+            <div class="col-md-4 d-flex">
+                <button class="btn btn-primary me-2" id="ekleButonu">Ekle</button>
+                <a href="/Recete/ReceteList" class="btn btn-outline-info">Listele</a>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Malzeme</th>
+                    <th>Miktar</th>
+                </tr>
+            </thead>
+            <tbody id="receteTable">
+            </tbody>
+        </table>
+
+        <button class="btn btn-success w-100" id="receteGonderButonu">Reçeteyi Gönder</button>
+    </div>
+
+    <script>
+        let receteKalemler = [];
+
+        $("#ekleButonu").click(function () {
+            let malzemeId = $("#malzemeSelect").val();
+            let miktar = parseFloat($("#miktarInput").val());
+            let selectedOption = $("#malzemeSelect option:selected");
+            let mevcutStok = parseFloat(selectedOption.attr("data-stok"));
+
+            if (!malzemeId || miktar <= 0) {
+                Swal.fire("Uyarı", "Geçerli bir malzeme ve miktar seçiniz!", "warning");
+                return;
+            }
+
+            if (miktar > mevcutStok) {
+                Swal.fire("Uyarı", "Stok yetersiz!", "error");
+                return;
+            }
+
+            receteKalemler.push({ MalzemeId: malzemeId, Miktar: miktar });
+            let yeniStokMiktari = mevcutStok - miktar;
+            selectedOption.attr("data-stok", yeniStokMiktari);
+            selectedOption.text(`${selectedOption.text().split("(")[0]} (Stok: ${yeniStokMiktari})`);
+
+            $("#receteTable").append(`<tr><td>${selectedOption.text()}</td><td>${miktar}</td></tr>`);
+            $("#miktarInput").val(""); // Miktar girişini sıfırla
+        });
+
+        $("#receteGonderButonu").click(function() {
+            let model = {
+                ReceteIsmi: $("#receteIsmi").val(),
+                Aciklama: $("#aciklama").val(),
+                VersiyonNo: parseInt($("#versiyonNo").val()),
+                Kalemler: receteKalemler
+            };
+
+            fetch('/Recete/Create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(model)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire({ icon: "error", title: "Hata!", text: data.error });
+                } else {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Başarılı!",
+                        text: "Reçeteniz başarıyla kaydedildi!",
+                        showConfirmButton: true,
+                        confirmButtonText: "Tamam",
+                        confirmButtonColor: "#28a745"
+                    }).then(() => { location.reload(); });
+                }
+            })
+            .catch(error => {
+                Swal.fire({ icon: "error", title: "Hata!", text: "Beklenmeyen bir hata oluştu." });
+                console.error('Gönderme hatası:', error);
+            });
+        });
+    </script>
+</body>
+</html>

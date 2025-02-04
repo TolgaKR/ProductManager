@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading.Tasks;           //Her reçetekalemin bir başlığı olcak
 
 namespace MaterMan.Entity.Concrete
 {
@@ -17,7 +17,7 @@ namespace MaterMan.Entity.Concrete
         public int VersiyonNo { get; set; }
 
         
-        public ReceteKalem ReceteKalem { get; set; }
+        public List<ReceteKalem> ReceteKalem { get; set; }
 
 
     }

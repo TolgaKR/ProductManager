@@ -77,6 +77,6 @@ app.UseAuthorization();   // Authorization middleware
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Material}/{action=Index}/{id?}");
+    pattern: "{controller=Recete}/{action=AddRecete}/{id?}");
 
 app.Run();

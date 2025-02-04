@@ -18,6 +18,15 @@ namespace MaterMan.Data.EfRepository
             _appDbContext = appDbContext;
         }
 
+      
+
+        public T GetStockByMalzemeIdAsync<T>(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+      
+
         public async Task MalzemeDeleteAsync(int malzemeId)
         {
             var result = await _appDbContext.Malzemeler.Where(x => x.Id == malzemeId).FirstOrDefaultAsync();
@@ -32,5 +41,12 @@ namespace MaterMan.Data.EfRepository
             return result;
         }
 
+        async Task<decimal> IMalzemeDal.GetStockByMalzemeIdAsync(int id)
+        {
+            return await _appDbContext.Stoklar
+               .Where(s => s.MalzemeId == id)  // Stok tablosundaki MalzemeId eşleşenleri bul
+               .Select(s => s.StokAdet)               // Stok miktarını çek
+               .FirstOrDefaultAsync();
+        }
     }
 }

@@ -40,7 +40,7 @@ namespace MaterMan.Business.Concrete
 
         public Task<Stok> GetStokByMalzemeIdAsync(int malzemeId)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); 
         }
 
         public Task UpdateStokAsync(Stok stok)
