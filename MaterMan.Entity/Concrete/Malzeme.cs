@@ -16,7 +16,7 @@ namespace MaterMan.Entity.Concrete
 
         public int MalzemeGrupId { get; set; } // Foreign Key
         public MalzemeGrup MalzemeGrup { get; set; } // Navigation Property
-
+        
         public decimal StokMiktari { get; set; }
 
         public int MalzemeBirimId { get; set; } // Foreign Key
@@ -24,6 +24,7 @@ namespace MaterMan.Entity.Concrete
 
         public List<Fiyat> MalzemeFiyatlar { get; set; } // One-to-Many ilişki
 
+        public List<ReceteBaslik> ReceteBasliks { get; set; }
         public ICollection<ReceteKalem> ReceteKalems { get; set; }
         public ICollection<Stok> Stoklar { get; set; }
     }   

@@ -13,10 +13,12 @@ namespace MaterMan.Entity.Concrete
         public string Aciklama { get; set; }
         public DateTime EklemeTarihi { get; set; }
         public bool IsActive { get; set; }
+
         public int MalzemeId { get; set; }
+        public Malzeme malzeme { get; set; }
+
         public int VersiyonNo { get; set; }
 
-        
         public List<ReceteKalem> ReceteKalem { get; set; }
 
 

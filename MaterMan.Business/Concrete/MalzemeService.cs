@@ -73,11 +73,7 @@ namespace MaterMan.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public async Task<decimal> GetStockByMalzemeIdAsync(int malzemeId)
-        {
-            return await _malzemeDal.GetStockByMalzemeIdAsync(malzemeId);
-        }
-
+      
         public void Update(Malzeme entity)
         {
             throw new NotImplementedException();
@@ -86,12 +82,16 @@ namespace MaterMan.Business.Concrete
         public async Task UpdateMalzemeAsync(Malzeme malzeme)
         {
            await _malzemeDal.UpdateAsync(malzeme);
-            
         }
 
         Malzeme Abstract.IRepository<Malzeme>.GetById(int id)
         {
             throw new NotImplementedException();
+        }
+
+         async Task<decimal> IMalzemeService.GetStokByMalzemeIdAsync(int malzemeId)
+        {
+            return await _malzemeDal.GetStokByMalzemeIdAsync(malzemeId);
         }
     }
 }

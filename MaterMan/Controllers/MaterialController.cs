@@ -178,16 +178,37 @@ namespace MaterMan.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateMaterial(Malzeme malzeme)
         {
-            malzeme.IsActive=true;
-            await _malzemeService.UpdateMalzemeAsync(malzeme);
+            malzeme.IsActive = true;
+            await _malzemeService.UpdateMalzemeAsync(malzeme); // Malzemeyi güncelle
+
+            var stok = await _stokService.GetStokByMalzemeIdAsync(malzeme.Id);
+
+            if (stok != null)
+            {
+                // Stok güncelleme işlemi (DOĞRU YAKLAŞIM)
+                stok.StokAdet = malzeme.StokMiktari; // Malzemenin StokMiktari'ni stok.StokAdet'e ata
+                stok.IslemTipi = "Güncelleme"; // veya "Giriş", "Çıkış" gibi uygun bir değer
+                stok.IslemTarihi = DateTime.Now;
+
+                await _stokService.UpdateStokAsync(stok); // Güncellenmiş stok nesnesini gönder
+            }
+            else
+            {
+                // Stok kaydı yoksa yeni bir tane oluştur
+                stok = new Stok
+                {
+                    MalzemeId = malzeme.Id,
+                    StokAdet = malzeme.StokMiktari,
+                    IslemTipi = "Giriş", // veya "Çıkış"
+                    IslemTarihi = DateTime.Now
+                };
+
+                await _stokService.AddStokAsync(stok); // Yeni stok kaydını ekle
+            }
 
             return RedirectToAction("Index");
-
         }
 
-
         #endregion
-
-
     }
 }

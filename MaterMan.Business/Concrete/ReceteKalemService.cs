@@ -1,5 +1,7 @@
 ﻿using MaterMan.Business.Abstract;
+using MaterMan.Data.Abstract;
 using MaterMan.Entity.Concrete;
+using MaterMan.Entity.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,14 @@ namespace MaterMan.Business.Concrete
 {
     public class ReceteKalemService : IReceteKalemService
     {
+        private IReceteBaslikDal _receteBaslikDal;
+
+
+        public ReceteKalemService(IReceteBaslikDal receteBaslikDal)
+        {
+            _receteBaslikDal = receteBaslikDal;
+        }
+
         public Task AddReceteKalemAsync(ReceteKalem receteKalem)
         {
             throw new NotImplementedException();
@@ -28,6 +38,11 @@ namespace MaterMan.Business.Concrete
         public Task<ReceteKalem> GetByReceteKalemIdAsync(int receteKalemId)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<ReceteDetayViewModel> GetReceteDetayAsync(int id)
+        {
+           return _receteBaslikDal.GetReceteDetay(id);
         }
 
         public Task UpdateReceteKalemAsync(ReceteKalem receteKalem)

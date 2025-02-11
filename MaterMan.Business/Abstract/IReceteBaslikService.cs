@@ -13,6 +13,8 @@ namespace MaterMan.Business.Abstract
         Task AddReceteBaslikAsync(ReceteBaslik receteBaslik);
         Task UpdateReceteBaslikAsync(ReceteBaslik receteBaslik);
 
+        Task<bool> AcceptReceteBaslikAsync(int id);
+
         Task DeleteReceteBaslikAsync(int receteBaslikId);
         Task<ReceteBaslik> GetByReceteBaslikIdAsync(int receteBaslikId);
     }

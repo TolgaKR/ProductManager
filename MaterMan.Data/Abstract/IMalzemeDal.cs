@@ -9,10 +9,9 @@ namespace MaterMan.Data.Abstract
 {
     public interface IMalzemeDal : IRepository<Malzeme>
     {
-        Task<decimal> GetStockByMalzemeIdAsync(int id); // Dönüş tipi int olmalı!
+        Task<decimal> GetStokByMalzemeIdAsync(int id); // Dönüş tipi int olmalı!
         Task MalzemeDeleteAsync(int malzemeId);
         Task<List<Malzeme>> MalzemeList();
-
 
     }
 }

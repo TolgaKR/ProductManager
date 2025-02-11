@@ -1,6 +1,7 @@
 ﻿using MaterMan.Business.Abstract;
 using MaterMan.Data.Abstract;
 using MaterMan.Entity.Concrete;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,9 @@ namespace MaterMan.Business.Concrete
             await _stokDal.AddAsync(stok);
         }
 
-        public Task DeleteStokAsync(int stokId)
+        public async Task DeleteStokAsync(int stokId)
         {
-            throw new NotImplementedException();
+             await _stokDal.GetStokByMalzemeIdAsync(stokId);
         }
 
         public Task<List<Stok>> GetAllStokAsync()
@@ -38,14 +39,14 @@ namespace MaterMan.Business.Concrete
             throw new NotImplementedException();
         }
 
-        public Task<Stok> GetStokByMalzemeIdAsync(int malzemeId)
+        public async Task<Stok> GetStokByMalzemeIdAsync(int malzemeId)
         {
-            throw new NotImplementedException(); 
+           return await _stokDal.GetStokByMalzemeIdAsync(malzemeId);
         }
 
-        public Task UpdateStokAsync(Stok stok)
+        public async Task UpdateStokAsync(Stok stok)
         {
-            throw new NotImplementedException();
+          await  _stokDal.UpdateAsync(stok);
         }
     }
 }

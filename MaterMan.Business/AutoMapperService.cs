@@ -18,6 +18,13 @@ public class MappingProfile : Profile
         CreateMap<MaterialViewModel, Malzeme>()
             .ForMember(dest => dest.MalzemeGrup, opt => opt.MapFrom(src => new MalzemeGrup { Id = src.MalzemeGrupId }))
             .ForMember(dest => dest.MalzemeBirim, opt => opt.MapFrom(src => new MalzemeBirim { Id = src.MalzemeBirimId }));
-            //.ForMember(dest => dest.Fiyat, opt => opt.MapFrom(src => new Fiyat { GuncelFiyat = src.Fiyat }));
+        //.ForMember(dest => dest.Fiyat, opt => opt.MapFrom(src => new Fiyat { GuncelFiyat = src.Fiyat }));
+
+
+        CreateMap<Stok, Stok>()
+            .ForMember(dest => dest.Malzeme, opt => opt.MapFrom(src => src.Malzeme));
+
+        CreateMap<Malzeme, Malzeme>()
+            .ForMember(dest => dest.Stoklar, opt => opt.MapFrom(src => src.Stoklar));
     }
 }

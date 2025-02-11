@@ -41,7 +41,7 @@ namespace MaterMan.Data.EfRepository
             return result;
         }
 
-        async Task<decimal> IMalzemeDal.GetStockByMalzemeIdAsync(int id)
+        async Task<decimal> IMalzemeDal.GetStokByMalzemeIdAsync(int id)
         {
             return await _appDbContext.Stoklar
                .Where(s => s.MalzemeId == id)  // Stok tablosundaki MalzemeId eşleşenleri bul

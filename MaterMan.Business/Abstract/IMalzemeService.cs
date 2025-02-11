@@ -16,7 +16,7 @@ namespace MaterMan.Business.Abstract
         Task DeleteMalzemeAsync(int malzemeId);
 
         Task<Malzeme> GetByMalzemeIdAsync(int malzemeId);
-        Task<decimal> GetStockByMalzemeIdAsync(int malzemeId); // Task<int> olmalı
+        Task<decimal> GetStokByMalzemeIdAsync(int malzemeId); // Task<int> olmalı
         Task<List<Malzeme>> GetAllMalzemeAsync();
         //Task<List<MalzemeGrup>> GetMalzemeGruplari();
     }

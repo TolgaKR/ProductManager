@@ -10,53 +10,54 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
-
+// Veritabaný baðlantýsý
 var connectionString = builder.Configuration.GetConnectionString("MaterManDbConnection");
 
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddAutoMapper(typeof(MappingProfile));
-
-
-// Identity ve DbContext servislerini ekle
+// DbContext ve Identity yapýlandýrmasý (AppUser ve AppRole kullanýyoruz)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Identity yapýlandýrmasý
+// Identity yapýlandýrmasý: AppUser ve AppRole kullanýlacak
 builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders();  // Identity yapýlandýrmasý
 
-builder.Services.AddControllersWithViews();
-// Veritabaný servislerini ekliyoruz (Baðlantý ve veri eriþimi için gerekli)
-builder.Services.AddScoped<IMalzemeDal, EfMalzemeRepo>();  // IMalzemeDal'ý MalzemeDal'a baðla
-builder.Services.AddScoped<IMalzemeBirimDal, EfMalzemeBirimRepo>();  // IMalzemeBirimDal'ý MalzemeBirimDal'a baðla
+// Ayrýca, SignInManager ve UserManager servisleri eklenmeli
+builder.Services.AddScoped<SignInManager<AppUser>>();
+builder.Services.AddScoped<UserManager<AppUser>>();
 
-builder.Services.AddScoped<IMalzemeGrupService, MalzemeGrupService>();
+// AutoMapper servisi
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+// Baðýmlýlýk enjeksiyonlarý (DI) 
+builder.Services.AddScoped<IMalzemeDal, EfMalzemeRepo>();
+builder.Services.AddScoped<IMalzemeBirimDal, EfMalzemeBirimRepo>();
 builder.Services.AddScoped<IMalzemeGrupDal, EfMalzemeGrupRepo>();
-
+builder.Services.AddScoped<IReceteBaslikDal, EfReceteBaslikRepo>();
+builder.Services.AddScoped<IReceteKalemDal, EfReceteKalemRepo>();
+builder.Services.AddScoped<IStokDal, EfStokRepo>();
 
 builder.Services.AddScoped<IMalzemeService, MalzemeService>();
 builder.Services.AddScoped<IMalzemeGrupService, MalzemeGrupService>();
 builder.Services.AddScoped<IMalzemeBirimService, MalzemeBirimService>();
+builder.Services.AddScoped<IReceteBaslikService, ReceteBaslikService>();
+builder.Services.AddScoped<IReceteKalemService, ReceteKalemService>();
+builder.Services.AddScoped<IStokService, StokService>();
 
-builder.Services.AddScoped<IStokService,StokService>();
-builder.Services.AddScoped<IStokDal, EfStokRepo>();
-
-
-
-// Hata sayfalarý ve diðer ayarlar
+// Kimlik doðrulama yapýlandýrmasý
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Account/Login";  // Giriþ sayfasý
-    options.AccessDeniedPath = "/Account/AccessDenied";  // Eriþim reddedildi sayfasý
+    options.LoginPath = "/Login/Index";  // Giriþ sayfasý
+    options.AccessDeniedPath = "/Login/AccessDenied";  // Yetkisiz eriþim
 });
+
+// MVC yapýlandýrmasý
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// HTTP request pipeline
+// HTTP request pipeline (Hata yakalama ve geliþtirme ortamý ayarlarý)
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -67,16 +68,20 @@ else
     app.UseHsts();
 }
 
+// HTTPS yönlendirme ve static dosyalar
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// Routing
 app.UseRouting();
 
+// Kimlik doðrulama ve yetkilendirme middleware'leri
 app.UseAuthentication();  // Authentication middleware
 app.UseAuthorization();   // Authorization middleware
 
+// MVC controller route
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Recete}/{action=AddRecete}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

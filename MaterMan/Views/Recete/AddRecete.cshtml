@@ -6,146 +6,198 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reçete Oluştur</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
             background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
         }
 
         .container {
-            max-width: 700px;
             background: white;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+            margin: 30px auto;
         }
 
-        h2 {
-            text-align: center;
-            color: #007bff;
+        .container {
+            max-height: 80vh;
+            overflow-y: auto;
+            scrollbar-width: thin; /* Firefox için ince scrollbar */
+            scrollbar-color: #007bff #f1f1f1; /* Kaydırma çubuğu rengi */
+        }
+
+            /* Chrome, Edge ve Safari için kaydırma çubuğu */
+            .container::-webkit-scrollbar {
+                width: 8px; /* Kaydırma çubuğu genişliği */
+            }
+
+            .container::-webkit-scrollbar-thumb {
+                background: #007bff; /* Kaydırma çubuğu rengi */
+                border-radius: 4px;
+            }
+
+            .container::-webkit-scrollbar-track {
+                background: #f1f1f1; /* Arka plan */
+            }
+
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+            .clear-btn:hover {
+                background: #5a6268;
+            }
+
+        .select2-container .select2-selection--single {
+            height: 38px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Reçete Oluştur</h2>
 
-        <div class="mb-3">
-            <label>Reçete İsmi</label>
-            <input type="text" class="form-control" id="receteIsmi">
-        </div>
 
-        <div class="mb-3">
-            <label>Açıklama</label>
-            <input type="text" class="form-control" id="aciklama">
-        </div>
-
-        <div class="mb-3">
-            <label>Versiyon No</label>
-            <input type="number" class="form-control" id="versiyonNo">
-        </div>
-
-        <h4>Reçete Kalemleri</h4>
-
-        <div class="row mb-3">
-            <div class="col-md-5">
-                <select class="form-control" id="malzemeSelect">
-                    <option value="">Malzeme Seçiniz</option>
-                    @foreach (var malzeme in Model)
-                    {
-                        <option value="@malzeme.Id" data-stok="@malzeme.StokMiktari">
-                            @malzeme.MalzemeAdi (Stok: @malzeme.StokMiktari)
-                        </option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-3">
-                <input type="number" class="form-control" id="miktarInput" placeholder="Miktar">
-            </div>
-            <div class="col-md-4 d-flex">
-                <button class="btn btn-primary me-2" id="ekleButonu">Ekle</button>
-                <a href="/Recete/ReceteList" class="btn btn-outline-info">Listele</a>
-            </div>
-        </div>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Malzeme</th>
-                    <th>Miktar</th>
-                </tr>
-            </thead>
-            <tbody id="receteTable">
-            </tbody>
-        </table>
-
-        <button class="btn btn-success w-100" id="receteGonderButonu">Reçeteyi Gönder</button>
+<div class="container">
+    <h2 class="text-center">Reçete Oluştur</h2>
+    <div class="text-center">
+        <a href="/Material/AddMaterial" class="btn btn-primary btn-sm">Yeni Ürün Reçetesi İçin Ürün Bilgilerini Giriniz</a>
     </div>
 
-    <script>
-        let receteKalemler = [];
+    <form id="receteForm" method="post" action="/Recete/Create">
+        <div class="form-group">
+            <label for="MalzemeId">Üreteceğiniz Ürünü Seçiniz</label>
+                <select id="MalzemeId" name="MalzemeId" class="form-control">
+                @foreach (var malzeme in Model)
+                {
+                    <option value="@malzeme.Id">@malzeme.MalzemeAdi</option>
+                }
+            </select>
+        </div>
 
-        $("#ekleButonu").click(function () {
-            let malzemeId = $("#malzemeSelect").val();
-            let miktar = parseFloat($("#miktarInput").val());
-            let selectedOption = $("#malzemeSelect option:selected");
-            let mevcutStok = parseFloat(selectedOption.attr("data-stok"));
+        <div class="form-group">
+            <label for="Receteİsmi">Reçete İsmi</label>
+            <input type="text" class="form-control" id="recipeName" placeholder="Reçete ismini giriniz">
+        </div>
 
-            if (!malzemeId || miktar <= 0) {
-                Swal.fire("Uyarı", "Geçerli bir malzeme ve miktar seçiniz!", "warning");
-                return;
+        <div class="form-group">
+            <label for="">Reçete Açıklama</label>
+            <textarea class="form-control" id="recipeDescription" rows="3" placeholder="Reçete açıklamasını giriniz"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="versionNumber">Versiyon No</label>
+            <input type="text" class="form-control" id="versionNumber" value="1" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="quantity">Üretilecek Ürün Adedi</label>
+            <input type="number" class="form-control" id="quantity" placeholder="Üretilecek ürün adedini giriniz">
+        </div>
+
+        <div class="form-group">
+            <label for="malzemeSecim">Malzemeleri Seçiniz</label>
+            <div class="input-group">
+                <select class="form-control" id="malzemeSecim">
+                    @foreach (var malzeme in Model)
+                    {
+                        <option value="@malzeme.Id">@malzeme.MalzemeAdi</option>
+                    }
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-success btn-sm" type="button" id="btnMalzemeEkle">Ekle</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Seçilen Malzemeler</label>
+            <ul class="list-group" id="secilenMalzemelerListesi"></ul>
+        </div>
+
+        <div class="form-group text-right">
+            <a href="/Recete/ReceteList" class="btn btn-primary btn-sm">Reçeteleri Listele</a>
+        </div>
+
+        <button type="button" id="btnReceteEkle" class="btn btn-primary btn-sm">Reçete Oluştur</button>
+        <button type="reset" class="btn clear-btn btn-sm">Temizle</button>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function () {
+        let selectedMaterials = new Set();
+
+        $("#btnMalzemeEkle").click(function () {
+            let malzemeId = $("#malzemeSecim").val();
+            let malzemeAdi = $("#malzemeSecim option:selected").text();
+
+            if (malzemeId && !selectedMaterials.has(malzemeId)) {
+                selectedMaterials.add(malzemeId);
+                $("#secilenMalzemelerListesi").append(`
+                    <li class="list-group-item d-flex justify-content-between align-items-center" data-id="${malzemeId}">
+                        ${malzemeAdi}
+                        <input type="number" class="form-control form-control-sm" value="1" style="width: 80px;" id="miktar-${malzemeId}" />
+                        <button class="btn btn-danger btn-sm btnSil">Sil</button>
+                    </li>
+                `);
             }
-
-            if (miktar > mevcutStok) {
-                Swal.fire("Uyarı", "Stok yetersiz!", "error");
-                return;
-            }
-
-            receteKalemler.push({ MalzemeId: malzemeId, Miktar: miktar });
-            let yeniStokMiktari = mevcutStok - miktar;
-            selectedOption.attr("data-stok", yeniStokMiktari);
-            selectedOption.text(`${selectedOption.text().split("(")[0]} (Stok: ${yeniStokMiktari})`);
-
-            $("#receteTable").append(`<tr><td>${selectedOption.text()}</td><td>${miktar}</td></tr>`);
-            $("#miktarInput").val(""); // Miktar girişini sıfırla
         });
 
-        $("#receteGonderButonu").click(function() {
-            let model = {
-                ReceteIsmi: $("#receteIsmi").val(),
-                Aciklama: $("#aciklama").val(),
-                VersiyonNo: parseInt($("#versiyonNo").val()),
-                Kalemler: receteKalemler
+        $("#secilenMalzemelerListesi").on("click", ".btnSil", function () {
+            let listItem = $(this).closest("li");
+            selectedMaterials.delete(listItem.data("id"));
+            listItem.remove();
+        });
+
+        $("#btnReceteEkle").click(function (e) {
+            e.preventDefault(); // Sayfanın yenilenmesini engelle
+
+            let kalemler = [];
+            $("#secilenMalzemelerListesi li").each(function () {
+                let malzemeId = $(this).data("id");
+                let miktar = $(this).find("input").val(); // Kullanıcının girdiği miktar
+                kalemler.push({
+                    MalzemeId: malzemeId,
+                    Miktar: miktar
+                });
+            });
+
+            let receteData = {
+                ReceteIsmi: $("#recipeName").val(),
+                Aciklama: $("#recipeDescription").val(),
+                VersiyonNo: $("#versionNumber").val(),
+                MalzemeId: $("#MalzemeId").val(),
+                Kalemler: kalemler
             };
 
-            fetch('/Recete/Create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(model)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    Swal.fire({ icon: "error", title: "Hata!", text: data.error });
-                } else {
-                    Swal.fire({
-                        icon: "success",
-                        title: "Başarılı!",
-                        text: "Reçeteniz başarıyla kaydedildi!",
-                        showConfirmButton: true,
-                        confirmButtonText: "Tamam",
-                        confirmButtonColor: "#28a745"
-                    }).then(() => { location.reload(); });
+            $.ajax({
+                url: "/Recete/Create",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(receteData),
+                success: function (response) {
+                    alert(response.message);
+                    window.location.href = "/Recete/ReceteList"; // Başarılı olursa listeye yönlendir
+                },
+                error: function (xhr) {
+                    let err = JSON.parse(xhr.responseText);
+                    alert("Hata: " + err.error);
                 }
-            })
-            .catch(error => {
-                Swal.fire({ icon: "error", title: "Hata!", text: "Beklenmeyen bir hata oluştu." });
-                console.error('Gönderme hatası:', error);
             });
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>

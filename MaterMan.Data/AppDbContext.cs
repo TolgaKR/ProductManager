@@ -14,9 +14,6 @@ namespace MaterMan.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-           
-
-
         public DbSet<Fiyat> Fiyatlar { get; set; }
         public DbSet<Malzeme> Malzemeler { get; set; }
         public DbSet<MalzemeBirim> MalzemeBirimleri { get; set; }
@@ -26,7 +23,6 @@ namespace MaterMan.Data
         public DbSet<Stok> Stoklar { get; set; }
         public DbSet<UrunTipi> UrunTips { get; set; }
 
-     
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            
@@ -45,10 +41,13 @@ namespace MaterMan.Data
                 new MalzemeGrup { Id = 2, GrupAdi = "Yan Ürün" },
                 new MalzemeGrup { Id = 3, GrupAdi = "Nihai Ürün" }
             );
+            modelBuilder.Entity<Stok>()
+        .HasOne(s => s.Malzeme)
+        .WithMany(m => m.Stoklar)
+        .HasForeignKey(s => s.MalzemeId);
+
 
             base.OnModelCreating(modelBuilder); // Sadece bir kere çağırmalısı
-
-
 
             /*
                         // Fiyat Tablosu
@@ -94,10 +93,6 @@ namespace MaterMan.Data
             */
 
         }
-
-
-
-
 
     }
 }

@@ -3,8 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-
 @using MaterMan.Entity.Concrete;
 @model List<ReceteBaslik>
 
@@ -45,6 +43,9 @@
                             <td>
                                 <a href="@Url.Action("Detail", "Recete", new { id = recete.ReceteBaslikId })" class="btn btn-info btn-sm">Detay</a>
                                 <button class="btn btn-danger btn-sm" onclick="silRecete(@recete.ReceteBaslikId)">Sil</button>
+                            </td>
+                            <td>
+                                <a href="@Url.Action("OnayDurumu", "Admin", new { id = recete.ReceteBaslikId })" class="btn btn-info btn-sm">Onay Durumu</a>
                             </td>
                         </tr>
                     }
