@@ -7,7 +7,7 @@
 
 
 
-    <h2>Login</h2>
+@*     <h2>Login</h2>
 
 <form asp-controller="Login" asp-action="Login" method="post">
 
@@ -22,4 +22,27 @@
         <button type="submit" class="btn btn-primary">Login</button>
 
         <div asp-validation-summary="All" class="text-danger"></div>
+    </form> *@
+
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f8f9fa;">
+    <form method="post" asp-action="SendVerificationCode" style="width: 100%; max-width: 350px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <h2 style="text-align: center; color: #343a40; margin-bottom: 20px;">Giriş Yap</h2>
+
+        <label style="font-weight: 500; display: block; margin-bottom: 5px;">Email:</label>
+        <input type="email" name="email" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ced4da; border-radius: 5px;" />
+
+        <label style="font-weight: 500; display: block; margin-bottom: 5px;">Şifre:</label>
+        <input type="password" name="password" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ced4da; border-radius: 5px;" />
+
+        <button type="submit" style="width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">Kod Gönder</button>
+
+        <div style="text-align: center; margin-top: 10px;">
+            <a href="/Login/ForgotPassword" style="color: #007bff; text-decoration: none;">Şifremi Unuttum</a>
+        </div>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Error))
+        {
+            <p style="color: red; text-align: center; margin-top: 10px;">@ViewBag.Error</p>
+        }
     </form>
+</div>

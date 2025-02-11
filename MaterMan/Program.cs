@@ -5,6 +5,7 @@ using MaterMan.Data;
 using MaterMan.Data.Abstract;
 using MaterMan.Data.EfRepository;
 using MaterMan.Entity;
+using MaterMan.Services.EmailServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();  // Identity yapýlandýrmasý
+
+builder.Services.AddSession(); // Session kullanýmý için ekle
+builder.Services.AddSingleton<EmailService>(); // Email servisini ekle
 
 // Ayrýca, SignInManager ve UserManager servisleri eklenmeli
 builder.Services.AddScoped<SignInManager<AppUser>>();
@@ -44,6 +48,10 @@ builder.Services.AddScoped<IMalzemeBirimService, MalzemeBirimService>();
 builder.Services.AddScoped<IReceteBaslikService, ReceteBaslikService>();
 builder.Services.AddScoped<IReceteKalemService, ReceteKalemService>();
 builder.Services.AddScoped<IStokService, StokService>();
+
+
+//MBKur
+builder.Services.AddHttpClient<CurrencyService>();
 
 // Kimlik doðrulama yapýlandýrmasý
 builder.Services.ConfigureApplicationCookie(options =>
@@ -76,12 +84,13 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // Kimlik doðrulama ve yetkilendirme middleware'leri
-app.UseAuthentication();  // Authentication middleware
-app.UseAuthorization();   // Authorization middleware
+app.UseSession(); // Session kullanýmý aktif et
+app.UseRouting();
+app.UseAuthorization();
 
 // MVC controller route
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 app.Run();
