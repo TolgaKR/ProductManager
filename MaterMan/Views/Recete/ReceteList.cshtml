@@ -42,6 +42,9 @@
                             <td>@recete.VersiyonNo</td>
                             <td>
                                 <a href="@Url.Action("Detail", "Recete", new { id = recete.ReceteBaslikId })" class="btn btn-info btn-sm">Detay</a>
+                                <a href="@Url.Action("DownloadExcell", "Recete", new { id = recete.ReceteBaslikId })" class="btn btn-success btn-sm">
+                                    Excel İndir
+                                </a>
                                 <button class="btn btn-danger btn-sm" onclick="silRecete(@recete.ReceteBaslikId)">Sil</button>
                             </td>
                             <td>

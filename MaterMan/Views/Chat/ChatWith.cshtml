@@ -1,0 +1,132 @@
+﻿@{
+    ViewData["Title"] = "ChatWith";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<h3>📩 Sohbet</h3>
+
+<style>
+    .chat-container {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        height: 400px;
+        overflow-y: auto;
+        background-color: #f9f9f9;
+    }
+
+    .chat-message {
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+        max-width: 75%;
+    }
+
+        .chat-message.sent {
+            align-self: flex-end;
+            background-color: #d1e7dd;
+        }
+
+        .chat-message.received {
+            align-self: flex-start;
+            background-color: #f8d7da;
+        }
+
+    .chat-footer {
+        display: flex;
+        margin-top: 10px;
+    }
+
+        .chat-footer input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .chat-footer button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+
+            .chat-footer button:disabled {
+                background-color: #ccc;
+            }
+</style>
+
+<div class="chat-container" id="chatBox">
+    <!-- Mesajlar buraya eklenecek -->
+</div>
+
+<div class="chat-footer">
+    <input type="text" id="messageInput" placeholder="Mesajınızı yazın..." />
+    <button id="sendBtn" disabled>Gönder</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatBox = document.getElementById("chatBox");
+        const messageInput = document.getElementById("messageInput");
+        const sendBtn = document.getElementById("sendBtn");
+
+        // SignalR bağlantısı
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // SignalR bağlantısını başlat
+        connection.start().then(() => {
+            console.log("✅ SignalR bağlantısı başarılı!");
+            sendBtn.disabled = false; // Gönder butonunu aktif yap
+        }).catch(err => {
+            console.error("❌ SignalR bağlantı hatası: " + err.toString());
+        });
+
+        // Mesaj alındığında
+        connection.on("ReceiveMessage", function (sender, message) {
+            const messageDiv = document.createElement("div");
+            messageDiv.className = "chat-message received";
+            messageDiv.textContent = message;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // Mesaj kutusunu en alta kaydır
+        });
+
+        // Mesaj gönderme
+        sendBtn.addEventListener("click", function () {
+            const message = messageInput.value.trim();
+            if (message === "") return;
+
+            connection.invoke("SenderMessage", "@ViewBag.ReceiverId", message).then(() => {
+                const messageDiv = document.createElement("div");
+                messageDiv.className = "chat-message sent";
+                messageDiv.textContent = message;
+                chatBox.appendChild(messageDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                messageInput.value = ""; // Input'u temizle
+            }).catch(err => {
+                console.error("❌ Mesaj gönderim hatası: " + err.toString());
+            });
+        });
+
+        // Enter tuşuna basıldığında mesaj gönder
+        messageInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendBtn.click();
+            }
+        });
+    });
+</script>
+

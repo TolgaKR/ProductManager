@@ -23,6 +23,8 @@ namespace MaterMan.Data
         public DbSet<Stok> Stoklar { get; set; }
         public DbSet<UrunTipi> UrunTips { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            
@@ -45,6 +47,22 @@ namespace MaterMan.Data
         .HasOne(s => s.Malzeme)
         .WithMany(m => m.Stoklar)
         .HasForeignKey(s => s.MalzemeId);
+
+
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m=>m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+
 
 
             base.OnModelCreating(modelBuilder); // Sadece bir kere çağırmalısı

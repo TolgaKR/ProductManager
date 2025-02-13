@@ -1,6 +1,7 @@
 using MaterMan.Business;
 using MaterMan.Business.Abstract;
 using MaterMan.Business.Concrete;
+using MaterMan.ChatHub;
 using MaterMan.Data;
 using MaterMan.Data.Abstract;
 using MaterMan.Data.EfRepository;
@@ -11,30 +12,27 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Veritabaný baðlantýsý
+// ?? Veritabaný baðlantýsý
 var connectionString = builder.Configuration.GetConnectionString("MaterManDbConnection");
-
-// DbContext ve Identity yapýlandýrmasý (AppUser ve AppRole kullanýyoruz)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Identity yapýlandýrmasý: AppUser ve AppRole kullanýlacak
+// ?? Identity yapýlandýrmasý
 builder.Services.AddIdentity<AppUser, AppRole>()
     .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();  // Identity yapýlandýrmasý
+    .AddDefaultTokenProviders();
 
-builder.Services.AddSession(); // Session kullanýmý için ekle
-builder.Services.AddSingleton<EmailService>(); // Email servisini ekle
-
-// Ayrýca, SignInManager ve UserManager servisleri eklenmeli
+// ?? Servisler ve baðýmlýlýk enjeksiyonu (DI)
+builder.Services.AddSession();
+builder.Services.AddSingleton<EmailService>();
 builder.Services.AddScoped<SignInManager<AppUser>>();
 builder.Services.AddScoped<UserManager<AppUser>>();
 
-// AutoMapper servisi
+// ?? AutoMapper servisi
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Baðýmlýlýk enjeksiyonlarý (DI) 
+// ?? Repository ve Servis Baðýmlýlýklarý
 builder.Services.AddScoped<IMalzemeDal, EfMalzemeRepo>();
 builder.Services.AddScoped<IMalzemeBirimDal, EfMalzemeBirimRepo>();
 builder.Services.AddScoped<IMalzemeGrupDal, EfMalzemeGrupRepo>();
@@ -49,23 +47,25 @@ builder.Services.AddScoped<IReceteBaslikService, ReceteBaslikService>();
 builder.Services.AddScoped<IReceteKalemService, ReceteKalemService>();
 builder.Services.AddScoped<IStokService, StokService>();
 
+// ?? SignalR servisini ekle
+builder.Services.AddSignalR();
 
-//MBKur
+// ?? Döviz kuru servisi
 builder.Services.AddHttpClient<CurrencyService>();
 
-// Kimlik doðrulama yapýlandýrmasý
+// ?? Kimlik doðrulama yapýlandýrmasý
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.LoginPath = "/Login/Index";  // Giriþ sayfasý
-    options.AccessDeniedPath = "/Login/AccessDenied";  // Yetkisiz eriþim
+    options.LoginPath = "/Login/Index";
+    options.AccessDeniedPath = "/Login/AccessDenied";
 });
 
-// MVC yapýlandýrmasý
+// ?? MVC yapýlandýrmasý
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// HTTP request pipeline (Hata yakalama ve geliþtirme ortamý ayarlarý)
+// ?? Geliþtirme ve hata yakalama ayarlarý
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -76,21 +76,22 @@ else
     app.UseHsts();
 }
 
-// HTTPS yönlendirme ve static dosyalar
+// ?? HTTPS yönlendirme, statik dosyalar ve Session kullanýmý
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseSession();
 
-// Routing
-app.UseRouting();
-
-// Kimlik doðrulama ve yetkilendirme middleware'leri
-app.UseSession(); // Session kullanýmý aktif et
-app.UseRouting();
+// ?? Middleware sýralamasý düzeltilmiþ
+app.UseRouting();  // ? ÖNCE Routing çaðrýlmalý!
 app.UseAuthorization();
 
-// MVC controller route
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Login}/{action=Index}/{id?}");
+// ?? MVC ve SignalR Route tanýmlamalarý
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChatHub>("/chatHub"); // ? SignalR Hub'ý
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Login}/{action=Index}/{id?}");
+});
 
 app.Run();
